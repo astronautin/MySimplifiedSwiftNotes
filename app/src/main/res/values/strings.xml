@@ -60,7 +60,7 @@
     <!-- -->
     <string name="dialog_delete">Selected notes will be deleted!</string>
     <string name="dialog_note_colour">Change note colour</string>
-    <string name="dialog_save_changes">Save changes?</string>
+    <string name="dialog_save_changes">Save</string>
     <string name="dialog_font_size">Change note font size</string>
     <string name="dialog_rate_title">Rate app</string>
     <string name="dialog_rate_message">Open app in Play Store?

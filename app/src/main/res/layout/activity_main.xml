@@ -31,6 +31,7 @@
         android:paddingTop="8dp"
         android:paddingBottom="8dp" />
 
+
     <ImageButton
         android:layout_width="65dp"
         android:layout_height="65dp"
@@ -48,7 +49,6 @@
         android:layout_height="wrap_content"
         android:id="@+id/noNotes"
         android:textAppearance="?android:attr/textAppearanceLarge"
-
         android:textColor="@color/theme_primary"
         android:textStyle="bold"
         android:layout_alignParentLeft="true"

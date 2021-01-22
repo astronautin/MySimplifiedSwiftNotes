@@ -2,8 +2,10 @@ package com.danni.mysimplifiedswiftnotes;
 
 import android.app.AlertDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.graphics.Color;
@@ -15,24 +17,36 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+
 public class EditActivity extends AppCompatActivity implements Toolbar.OnMenuItemClickListener {
 
-    public static final String EXTRA_MESSAGE = "message";
+    public static final String EXTRA_MESSAGE_CONTENT = "theContent";
+    public static final String EXTRA_MESSAGE_HEADING = "theHeading";
 
-    // Layout components
-    private EditText titleEdit, bodyEdit;
-    private MenuItem menuHideBody;
+    static final int NEW_NOTE_REQUEST = 60000;
+    static final String NOTE_REQUEST_CODE = "requestCode";
 
-    private InputMethodManager imm;
-    private Bundle bundle;
 
     private String[] colourArr; // Colours string array
     private int[] colourArrResId; // colourArr to resource int array
@@ -47,6 +61,9 @@ public class EditActivity extends AppCompatActivity implements Toolbar.OnMenuIte
     private AlertDialog fontDialog, saveChangesDialog;
     //private ColorPickerDialog colorPickerDialog;
 
+    SharedPreferences myPrefs;
+
+    EditText headingEditText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,10 +79,57 @@ public class EditActivity extends AppCompatActivity implements Toolbar.OnMenuIte
         setSupportActionBar(toolbar);
         toolbar.setTitle(R.string.newNote); //order important!
 
-        titleEdit = (EditText)findViewById(R.id.titleEdit);
-        bodyEdit = (EditText)findViewById(R.id.bodyEdit);
+        Intent intent = getIntent();
+        //final String itemFromMainActivity = intent.getStringExtra(MainActivity.EXTRA_MESSAGE);
+        // Get data bundle from MainActivity
+        Bundle bundle = getIntent().getExtras();
+//        if (bundle.getInt(NOTE_REQUEST_CODE) == NEW_NOTE_REQUEST) {
+//            headingEditText.requestFocus();
+//        }
 
-        initDialogs(this);
+        myPrefs = getSharedPreferences("prefID", Context.MODE_PRIVATE);
+
+//        String name = myPrefs.getString("nameKey","No name");
+//        int age = myPrefs.getInt("ageKey",0);
+
+        String heading = myPrefs.getString("headingKey","No name");
+        String content = myPrefs.getString("contentKey","No name");
+
+        Button buttonSave = (Button) findViewById(R.id.saveButton);
+        buttonSave.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //get reference to TextView
+                TextView label = (TextView) findViewById(R.id.labelID);
+
+                //get references to Name and Age EditTexts
+                //EditText nameEditText = (EditText) findViewById(R.id.content);
+                //EditText ageEditText = (EditText) findViewById(R.id.numberID);
+
+                headingEditText = (EditText) findViewById(R.id.heading);
+                EditText contentEditText = (EditText) findViewById(R.id.content);
+
+                //set up SharedPreferences
+                myPrefs = getSharedPreferences("prefID", Context.MODE_PRIVATE);
+                SharedPreferences.Editor editor = myPrefs.edit();
+                //editor.putString("nameKey", nameEditText.getText().toString());
+                //editor.putInt("ageKey", Integer.parseInt(ageEditText.getText().toString()));
+                editor.putString("headingKey", headingEditText.getText().toString());
+                editor.putString("contentKey", contentEditText.getText().toString());
+                editor.apply();
+                String heading = myPrefs.getString("headingKey","Default");
+                label.setText("your title is " + heading);
+
+
+                Intent intent1 = new Intent(getApplicationContext(), MainActivity.class);
+                intent1.putExtra(EXTRA_MESSAGE_HEADING, heading);
+                //startActivity(intent1);
+                setResult(RESULT_OK, intent1);
+                finish();
+            }
+        });
+
+
     }
 
 
@@ -78,56 +142,21 @@ public class EditActivity extends AppCompatActivity implements Toolbar.OnMenuIte
     }
 
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.id_done:
-                //Code to run when the Create Order item is clicked
-                Intent intent = new Intent(this, OederActivity.class);
-                startActivity(intent);
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
-        }
-    }
-
-
-        /**
-         * Implementation of AlertDialogs such as
-         * - colorPickerDialog, fontDialog and saveChangesDialog -
-         * @param context The Activity context of the dialogs; in this case EditActivity context
-         */
-    protected void initDialogs(Context context) {
-        // Font size picker dialog
-        fontDialog = new AlertDialog.Builder(context)
-                .setTitle(R.string.dialog_font_size)
-                .setItems(fontSizeNameArr, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        // Font size updated with new pick
-                        fontSize = fontSizeArr[which];
-                        bodyEdit.setTextSize(TypedValue.COMPLEX_UNIT_SP, fontSize);
-                    }
-                })
-                .setNeutralButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                    }
-                })
-                .create();
-    }
-
-    /**
-     * Check if current device has tablet screen size or not
-     * @param context current application context
-     * @return true if device is tablet, false otherwise
-     */
-    public static boolean isTablet(Context context) {
-        return (context.getResources().getConfiguration().screenLayout &
-                Configuration.SCREENLAYOUT_SIZE_MASK) >= Configuration.SCREENLAYOUT_SIZE_LARGE;
-    }
-
+//
+//
+//    public void onSave(View v) {
+//
+//        String title  = titleEdit.getText().toString();
+//        int body  = Integer.valueOf(bodyEdit.getText().toString());
+//
+//        SharedPreferences.Editor editor = sp.edit();
+//        editor.putString(KEY_TITLE, title);
+//        editor.putInt(KEY_BODY, body);
+//        editor.commit();
+//
+//        Toast.makeText(this, "Saved!", Toast.LENGTH_SHORT).show();
+//
+//    }
 
     /**
      * Item clicked in Toolbar menu callback method
@@ -165,20 +194,6 @@ public class EditActivity extends AppCompatActivity implements Toolbar.OnMenuIte
                 getResources().getString(R.string.toast_edittext_cannot_be_empty),
                 Toast.LENGTH_LONG);
         toast.show();
-    }
-
-
-    /**
-     * If current window loses focus -> hide keyboard
-     * @param hasFocus parameter passed by system; true if focus changed, false otherwise
-     */
-    @Override
-    public void onWindowFocusChanged(boolean hasFocus) {
-        super.onWindowFocusChanged(hasFocus);
-
-        if (!hasFocus)
-            if (imm != null && titleEdit != null)
-                imm.hideSoftInputFromWindow(titleEdit.getWindowToken(), 0);
     }
 
 

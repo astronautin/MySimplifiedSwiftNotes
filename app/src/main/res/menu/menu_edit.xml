@@ -5,11 +5,11 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context=".EditActivity" >
 
-    <item android:id="@+id/id_done"
-        android:title="@string/done"
-        android:orderInCategory="1"
-        android:icon="@drawable/baseline_done_black_18dp"
-        app:showAsAction="ifRoom" />
+<!--    <item android:id="@+id/id_done"-->
+<!--        android:title="@string/done"-->
+<!--        android:orderInCategory="1"-->
+<!--        android:icon="@drawable/baseline_done_black_18dp"-->
+<!--        app:showAsAction="always" />-->
 
 
     <item android:id="@+id/action_font_size"

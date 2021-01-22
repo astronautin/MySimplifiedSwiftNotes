@@ -18,7 +18,7 @@
     <EditText
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:id="@+id/titleEdit"
+        android:id="@+id/heading"
         android:background="@color/black_10"
         android:inputType="textCapSentences"
         android:layout_below="@+id/toolbarEdit"
@@ -43,7 +43,7 @@
         android:layout_height="match_parent"
         android:id="@+id/scrollView"
         android:background="@color/transparent"
-        android:layout_below="@+id/titleEdit"
+        android:layout_below="@+id/heading"
         android:layout_alignParentLeft="true"
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
@@ -54,7 +54,7 @@
         <EditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/bodyEdit"
+            android:id="@+id/content"
             android:background="@color/transparent"
             android:inputType="textCapSentences|textImeMultiLine|textMultiLine"
             android:gravity="start|end"
@@ -69,6 +69,15 @@
 
     </ScrollView>
 
+    <TextView
+        android:id="@+id/labelID"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/saveButton"
+        android:text="gimme a title"
+        android:textAlignment="center"
+        android:textSize="24sp" />
+
     <View
         android:layout_width="match_parent"
         android:layout_height="@dimen/shadow_elevation"
@@ -77,5 +86,18 @@
         android:layout_alignParentLeft="true"
         android:background="@drawable/drop_shadow" />
 
+    <Button
+        android:id="@+id/saveButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+
+        android:layout_marginBottom="30dp"
+        android:layout_marginRight="30dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:text="@string/dialog_save_changes" />
+
 
 </RelativeLayout>
+
+<!--Button android:onClick="onSave"-->
